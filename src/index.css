@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* LegalEase AI – Deep Navy Justice + Amber Accent */
+    --background: 210 25% 97%;
+    --foreground: 210 60% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 60% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 60% 18%;
+
+    /* Deep Navy Blue – authoritative, trustworthy */
+    --primary: 210 60% 30%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Light Navy Secondary */
+    --secondary: 210 30% 92%;
+    --secondary-foreground: 210 60% 20%;
+
+    --muted: 210 20% 94%;
+    --muted-foreground: 210 15% 50%;
+
+    /* Emerald Green – for legal confidence/success */
+    --accent: 158 64% 35%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 210 60% 30%;
+
+    /* Charts */
+    --chart-1: 210 60% 35%;
+    --chart-2: 38 92% 50%;
+    --chart-3: 158 64% 35%;
+    --chart-4: 0 72% 51%;
+    --chart-5: 270 50% 45%;
+
+    /* Sidebar */
+    --sidebar: 210 60% 20%;
+    --sidebar-foreground: 210 20% 90%;
+    --sidebar-primary: 38 92% 55%;
+    --sidebar-primary-foreground: 210 60% 15%;
+    --sidebar-accent: 210 60% 28%;
+    --sidebar-accent-foreground: 210 20% 90%;
+    --sidebar-border: 210 60% 26%;
+    --sidebar-ring: 38 92% 55%;
+
+    /* Fonts */
+    --font-sans: 'Inter', sans-serif;
+    --font-serif: 'Merriweather', serif;
+    --font-mono: 'Courier New', monospace;
+
+    /* Shadows */
+    --shadow-2xs: 0px 2px 4px -1px hsl(210 60% 15% / 0.06);
+    --shadow-xs: 0px 2px 6px -1px hsl(210 60% 15% / 0.08);
+    --shadow-sm: 0px 4px 8px -2px hsl(210 60% 15% / 0.10);
+    --shadow: 0px 6px 12px -2px hsl(210 60% 15% / 0.12);
+    --shadow-md: 0px 8px 16px -4px hsl(210 60% 15% / 0.14);
+    --shadow-lg: 0px 12px 24px -6px hsl(210 60% 15% / 0.16);
+    --shadow-xl: 0px 20px 40px -8px hsl(210 60% 15% / 0.20);
+    --shadow-2xl: 0px 30px 60px -12px hsl(210 60% 15% / 0.25);
+
+    /* Amber highlight */
+    --amber: 38 92% 50%;
+    --amber-light: 38 92% 96%;
+
+    /* Misc */
+    --tracking-normal: -0.01em;
+    --spacing: 0.25rem;
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --background: 210 60% 10%;
+    --foreground: 210 20% 90%;
+    --card: 210 55% 14%;
+    --card-foreground: 210 20% 90%;
+    --popover: 210 55% 14%;
+    --popover-foreground: 210 20% 90%;
+    --primary: 210 55% 55%;
+    --primary-foreground: 210 60% 10%;
+    --secondary: 210 40% 20%;
+    --secondary-foreground: 210 20% 80%;
+    --muted: 210 40% 18%;
+    --muted-foreground: 210 15% 55%;
+    --accent: 158 60% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 40% 22%;
+    --input: 210 40% 22%;
+    --ring: 210 55% 55%;
+    --chart-1: 210 55% 55%;
+    --chart-2: 38 92% 60%;
+    --chart-3: 158 60% 45%;
+    --chart-4: 0 72% 55%;
+    --chart-5: 270 50% 60%;
+    --sidebar: 210 60% 8%;
+    --sidebar-foreground: 210 20% 85%;
+    --sidebar-primary: 38 92% 55%;
+    --sidebar-primary-foreground: 210 60% 10%;
+    --sidebar-accent: 210 55% 16%;
+    --sidebar-accent-foreground: 210 20% 85%;
+    --sidebar-border: 210 55% 16%;
+    --sidebar-ring: 38 92% 55%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    letter-spacing: var(--tracking-normal);
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
