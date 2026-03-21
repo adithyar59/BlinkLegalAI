@@ -4,88 +4,71 @@
  */
 
 import { useState } from 'react'
-import { Search, ChevronRight, ArrowLeft, Scale, FileText, Building2, CheckSquare } from 'lucide-react'
+import { Search, ChevronRight, ArrowLeft, Scale, FileText, Building2, CheckSquare, ShoppingCart, Shield, Briefcase, Home, Users, Activity, Info, AlertCircle, CreditCard } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { legalDataset, LEGAL_CATEGORIES, type LegalEntry, type LegalCategory } from '@/data/legalDataset'
 
-const CATEGORY_CONFIG: Record<LegalCategory, { icon: string; color: string; bgColor: string; description: string }> = {
-  'Labour Law': {
-    icon: '⚖️',
-    color: 'text-blue-700',
-    bgColor: 'bg-blue-50 border-blue-200',
-    description: 'Wages, termination, PF, maternity, overtime and worker rights',
-  },
-  'Consumer Rights': {
-    icon: '🛒',
-    color: 'text-orange-700',
-    bgColor: 'bg-orange-50 border-orange-200',
-    description: 'Defective products, online fraud, banking issues, RERA',
-  },
-  'Cybercrime': {
-    icon: '🔐',
-    color: 'text-red-700',
-    bgColor: 'bg-red-50 border-red-200',
-    description: 'UPI fraud, hacking, cyberbullying, data privacy, phishing',
-  },
-  'Harassment': {
-    icon: '🛡️',
-    color: 'text-purple-700',
-    bgColor: 'bg-purple-50 border-purple-200',
-    description: 'Domestic violence, workplace harassment, stalking, dowry',
-  },
-  'Tenancy': {
-    icon: '🏠',
-    color: 'text-green-700',
-    bgColor: 'bg-green-50 border-green-200',
-    description: 'Rent agreements, eviction, security deposit, landlord disputes',
-  },
+const TOPIC_CONFIG: Record<string, { icon: any; articleCount: number }> = {
+  'Consumer Protection': { icon: ShoppingCart, articleCount: 12 },
+  'Cybercrime & IT Act': { icon: Shield, articleCount: 9 },
+  'Labour & Employment': { icon: Briefcase, articleCount: 15 },
+  'Property & Tenancy': { icon: Home, articleCount: 11 },
+  'Family Law': { icon: Users, articleCount: 13 },
+  'Constitutional Rights': { icon: Activity, articleCount: 8 },
+  'RTI & Public Services': { icon: Info, articleCount: 7 },
+  'Criminal Law Basics': { icon: AlertCircle, articleCount: 10 },
+  'Women\'s Rights': { icon: Users, articleCount: 14 },
+  'Banking & Finance': { icon: CreditCard, articleCount: 6 },
+}
+
+const CATEGORY_MAP: Record<LegalCategory, string> = {
+  'Labour Law': 'Labour & Employment',
+  'Consumer Rights': 'Consumer Protection',
+  'Cybercrime': 'Cybercrime & IT Act',
+  'Harassment': 'Women\'s Rights',
+  'Tenancy': 'Property & Tenancy',
 }
 
 function EntryDetail({ entry, onBack }: { entry: LegalEntry; onBack: () => void }) {
-  const config = CATEGORY_CONFIG[entry.category]
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 animate-slide-up">
-      <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-5 transition-colors">
-        <ArrowLeft className="w-4 h-4" />
+    <div className="max-w-2xl mx-auto px-6 py-12 animate-msg-in">
+      <button onClick={onBack} className="flex items-center gap-2 text-[13px] text-[#f0ece3]/40 hover:text-[#f0ece3] mb-6 transition-colors group">
+        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
         Back to topics
       </button>
 
-      <div className={cn('border rounded-xl p-4 mb-6', config.bgColor)}>
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-xl">{config.icon}</span>
-          <span className={cn('text-xs font-bold uppercase tracking-wider', config.color)}>{entry.category}</span>
+      <div className="glass rounded-[28px] p-6 mb-8">
+        <div className="flex items-center gap-3 mb-3">
+          <span className="text-[10px] font-bold text-[#c9a96e] uppercase tracking-[2px]">{entry.category}</span>
         </div>
-        <h1 className="text-xl font-serif font-bold text-foreground mb-1">{entry.title}</h1>
-        <p className="text-xs text-muted-foreground font-medium">📜 {entry.law_reference}</p>
+        <h1 className="text-2xl font-serif text-[#f0ece3] mb-2 leading-tight">{entry.title}</h1>
+        <p className="text-[12px] font-medium text-[#f0ece3]/40 tracking-wide uppercase">Reference: {entry.law_reference}</p>
       </div>
 
-      <div className="space-y-4">
-        {/* Simple Explanation */}
-        <div className="border border-primary/20 rounded-xl p-4 bg-primary/5">
-          <div className="flex items-center gap-2 mb-2">
-            <Scale className="w-4 h-4 text-primary" />
-            <span className="text-xs font-bold text-primary uppercase tracking-wider">In Simple Terms</span>
+      <div className="space-y-6">
+        <div className="border border-[#c9a96e]/20 rounded-[20px] p-6 bg-[#c9a96e]/5 backdrop-blur-md">
+          <div className="flex items-center gap-2 mb-3">
+            <Scale className="w-4 h-4 text-[#c9a96e]" />
+            <span className="text-[10px] font-bold text-[#c9a96e] uppercase tracking-[2px]">In Simple Terms</span>
           </div>
-          <p className="text-sm text-foreground leading-relaxed">{entry.simplified_explanation}</p>
+          <p className="text-[15px] text-[#f0ece3] leading-[1.8]">{entry.simplified_explanation}</p>
         </div>
 
-        {/* Full Description */}
-        <div className="border border-border rounded-xl p-4 bg-card">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Legal Description</p>
-          <p className="text-sm text-foreground/90 leading-relaxed">{entry.description}</p>
+        <div className="glass rounded-[20px] p-6">
+          <p className="text-[10px] font-semibold text-[#f0ece3]/40 uppercase tracking-[2px] mb-3">Legal Context</p>
+          <p className="text-[14px] text-[#f0ece3]/80 leading-[1.7]">{entry.description}</p>
         </div>
 
-        {/* Documents Required */}
         {entry.documents_required.length > 0 && (
-          <div className="border border-border rounded-xl p-4 bg-card">
-            <div className="flex items-center gap-2 mb-3">
-              <FileText className="w-4 h-4 text-primary" />
-              <span className="text-xs font-bold text-foreground uppercase tracking-wider">Documents Required</span>
+          <div className="glass rounded-[20px] p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <FileText className="w-4 h-4 text-[#c9a96e]" />
+              <span className="text-[10px] font-bold text-[#f0ece3] uppercase tracking-[2px]">Required Documents</span>
             </div>
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {entry.documents_required.map((doc, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-foreground/90">
-                  <CheckSquare className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
+                <li key={i} className="flex items-start gap-3 text-[14px] text-[#f0ece3]/90">
+                  <CheckSquare className="w-4 h-4 text-[#c9a96e] shrink-0 mt-0.5" />
                   {doc}
                 </li>
               ))}
@@ -93,35 +76,32 @@ function EntryDetail({ entry, onBack }: { entry: LegalEntry; onBack: () => void 
           </div>
         )}
 
-        {/* Authority */}
-        <div className="border border-border rounded-xl p-4 bg-card">
-          <div className="flex items-center gap-2 mb-2">
-            <Building2 className="w-4 h-4 text-accent" />
-            <span className="text-xs font-bold text-foreground uppercase tracking-wider">Authority to Approach</span>
+        <div className="glass rounded-[20px] p-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Building2 className="w-4 h-4 text-[#c9a96e]" />
+            <span className="text-[10px] font-bold text-[#f0ece3] uppercase tracking-[2px]">Authority to Approach</span>
           </div>
-          <p className="text-sm font-medium text-foreground">{entry.authority}</p>
+          <p className="text-[15px] font-medium text-[#f0ece3]">{entry.authority}</p>
         </div>
 
-        {/* Procedure Steps */}
         {entry.procedure_steps.length > 0 && (
-          <div className="border border-border rounded-xl p-4 bg-card">
-            <p className="text-xs font-bold text-foreground uppercase tracking-wider mb-3">Step-by-Step Procedure</p>
-            <ol className="space-y-2">
+          <div className="glass rounded-[20px] p-6">
+            <p className="text-[10px] font-bold text-[#f0ece3] uppercase tracking-[2px] mb-4">Step-by-Step Procedure</p>
+            <ol className="space-y-3">
               {entry.procedure_steps.map((step, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                <li key={i} className="flex items-start gap-4">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#c9a96e] to-[#e8c99a] text-[#0d1f3c] text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
                     {i + 1}
                   </div>
-                  <p className="text-sm text-foreground/90 leading-relaxed">{step}</p>
+                  <p className="text-[14px] text-[#f0ece3]/90 leading-relaxed">{step}</p>
                 </li>
               ))}
             </ol>
           </div>
         )}
 
-        {/* Disclaimer */}
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-800 leading-relaxed">
-          ⚠️ This information is provided for legal awareness purposes only. Please consult a qualified legal professional for advice specific to your situation.
+        <div className="bg-white/5 border border-white/10 rounded-[20px] p-5 text-[11px] text-[#f0ece3]/40 leading-relaxed">
+          The information provided above is for awareness purposes based on generalized Indian legal frameworks. It is not a substitute for professional legal advice.
         </div>
       </div>
     </div>
@@ -150,109 +130,89 @@ export function TopicsPage() {
       })
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-10">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-serif font-bold text-primary mb-2">Legal Topic Explorer</h1>
-        <p className="text-muted-foreground text-sm max-w-md mx-auto">
-          Browse {legalDataset.length} verified legal topics across 5 categories of Indian law.
+    <div className="max-w-[1100px] mx-auto px-6 py-16">
+      <header className="text-center mb-12">
+        <span className="text-[10px] font-bold text-[#c9a96e] uppercase tracking-[3px] mb-4 block">Knowledge Directory</span>
+        <h1 className="text-[clamp(32px,5vw,46px)] font-serif text-[#f0ece3] mb-5 tracking-[-1px] leading-tight">Explore <em>Legal Domains</em></h1>
+        <p className="text-[15px] font-light text-[#f0ece3]/60 max-w-[520px] mx-auto leading-[1.7]">
+          Browse through specialized categories to find articles, cases, and summaries related to specific legal interest areas.
         </p>
-      </div>
+      </header>
 
-      {/* Search */}
-      <div className="relative max-w-lg mx-auto mb-8">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+      <div className="relative max-w-lg mx-auto mb-16">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#f0ece3]/20" />
         <input
           type="text"
-          placeholder="Search legal topics…"
+          placeholder="Search legal topics..."
           value={searchQuery}
           onChange={(e) => { setSearchQuery(e.target.value); setActiveCategory(null) }}
-          className="w-full pl-9 pr-4 py-2.5 border border-border rounded-xl bg-card text-sm focus:outline-none focus:border-primary/50 focus:shadow-sm transition-all"
+          className="w-full pl-11 pr-6 py-3.5 glass rounded-full text-sm outline-none focus:border-[#c9a96e] transition-all"
         />
       </div>
 
-      {/* Category Grid */}
       {!searchQuery.trim() && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
-          {LEGAL_CATEGORIES.map((cat) => {
-            const config = CATEGORY_CONFIG[cat]
-            const count = legalDataset.filter((e) => e.category === cat).length
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {Object.entries(TOPIC_CONFIG).map(([name, config]) => {
+            const Icon = config.icon
+            const isSelected = activeCategory && CATEGORY_MAP[activeCategory] === name
             return (
               <button
-                key={cat}
-                onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
+                key={name}
+                onClick={() => {
+                  const cat = Object.keys(CATEGORY_MAP).find(k => CATEGORY_MAP[k as LegalCategory] === name) as LegalCategory
+                  setActiveCategory(isSelected ? null : cat)
+                }}
                 className={cn(
-                  'flex flex-col items-center gap-2 p-4 border rounded-xl transition-all duration-200 text-center',
-                  activeCategory === cat
-                    ? 'border-primary bg-primary text-primary-foreground shadow-md scale-105'
-                    : cn('border-border bg-card hover:border-primary/30 hover:shadow-sm hover:scale-[1.02]', config.bgColor)
+                  'flex flex-col items-center gap-4 p-7 glass rounded-[20px] text-center transition-all',
+                  isSelected ? 'border-[#c9a96e] bg-white/10 scale-[1.05] shadow-lg' : 'hover:scale-[1.02] active:scale-[0.98]'
                 )}
               >
-                <span className="text-2xl">{config.icon}</span>
-                <span className={cn('text-xs font-bold leading-tight', activeCategory === cat ? 'text-primary-foreground' : config.color)}>
-                  {cat}
-                </span>
-                <span className={cn('text-xs', activeCategory === cat ? 'text-primary-foreground/80' : 'text-muted-foreground')}>
-                  {count} topics
-                </span>
+                <div className="w-12 h-12 rounded-[16px] bg-[#c9a96e]/10 border border-[#c9a96e]/25 flex items-center justify-center text-[#c9a96e]">
+                  <Icon className="w-6 h-6 stroke-[1.6]" />
+                </div>
+                <div className="space-y-1">
+                  <div className="text-[14px] font-medium text-[#f0ece3] leading-tight">{name}</div>
+                  <div className="text-[11px] text-[#f0ece3]/30 tracking-wide">{config.articleCount} articles</div>
+                </div>
               </button>
             )
           })}
         </div>
       )}
 
-      {/* Results */}
       {(activeCategory || searchQuery.trim()) && (
-        <div className="animate-fade-in">
+        <div className="animate-msg-in mt-12">
           {activeCategory && (
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">{CATEGORY_CONFIG[activeCategory].icon}</span>
-                <h2 className="font-serif font-bold text-foreground text-lg">{activeCategory}</h2>
-                <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">{filteredEntries.length} topics</span>
+            <div className="flex items-center justify-between mb-6 px-2">
+              <div className="flex items-center gap-3">
+                <h2 className="font-serif text-[#f0ece3] text-xl">{CATEGORY_MAP[activeCategory]}</h2>
+                <span className="text-[11px] text-[#f0ece3]/40 bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full">{filteredEntries.length} topics found</span>
               </div>
-              <button onClick={() => setActiveCategory(null)} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                Clear filter
+              <button onClick={() => setActiveCategory(null)} className="text-[12px] text-[#f0ece3]/40 hover:text-[#f0ece3] transition-colors">
+                Show all categories
               </button>
             </div>
           )}
 
-          {searchQuery.trim() && (
-            <p className="text-sm text-muted-foreground mb-4">
-              {filteredEntries.length === 0 ? 'No results found.' : `${filteredEntries.length} result${filteredEntries.length !== 1 ? 's' : ''} for "${searchQuery}"`}
-            </p>
-          )}
-
-          <div className="space-y-2">
-            {filteredEntries.map((entry) => {
-              const config = CATEGORY_CONFIG[entry.category]
-              return (
-                <button
-                  key={entry.id}
-                  onClick={() => setSelectedEntry(entry)}
-                  className="w-full text-left flex items-center gap-3 p-4 border border-border rounded-xl bg-card hover:border-primary/30 hover:shadow-sm transition-all duration-200 group"
-                >
-                  <span className="text-xl shrink-0">{config.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors truncate">{entry.title}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className={cn('text-xs font-medium', config.color)}>{entry.category}</span>
-                      <span className="text-xs text-muted-foreground">·</span>
-                      <span className="text-xs text-muted-foreground truncate">{entry.law_reference}</span>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary shrink-0 transition-all group-hover:translate-x-1" />
-                </button>
-              )
-            })}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {filteredEntries.map((entry) => (
+              <button
+                key={entry.id}
+                onClick={() => setSelectedEntry(entry)}
+                className="w-full text-left flex items-center gap-4 p-5 glass rounded-[24px] hover:scale-[1.01] active:scale-[0.99] group"
+              >
+                <div className="w-10 h-10 rounded-xl bg-[#c9a96e]/10 border border-[#c9a96e]/25 flex items-center justify-center text-[#c9a96e] shrink-0 group-hover:scale-110 transition-transform">
+                  <Scale className="w-5 h-5 stroke-[1.6]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-[15px] text-[#f0ece3] group-hover:text-[#c9a96e] transition-colors truncate">{entry.title}</p>
+                  <p className="text-[11px] text-[#f0ece3]/30 uppercase tracking-wider mt-0.5 truncate">{entry.law_reference}</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[#f0ece3]/20 group-hover:text-[#c9a96e] group-hover:translate-x-1 transition-all" />
+              </button>
+            ))}
           </div>
         </div>
-      )}
-
-      {!activeCategory && !searchQuery.trim() && (
-        <p className="text-center text-sm text-muted-foreground mt-4">
-          Select a category above or search to browse legal topics
-        </p>
       )}
     </div>
   )

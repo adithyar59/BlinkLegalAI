@@ -4,9 +4,25 @@
  */
 
 import { useState } from 'react'
-import { BookOpen, ChevronRight, Clock, CheckCircle, XCircle, ArrowLeft, Award } from 'lucide-react'
+import { BookOpen, ChevronRight, Clock, CheckCircle, XCircle, ArrowLeft, Award, ShoppingCart, Lock, Briefcase, Users, Home } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { learningModules, type LearningModule, type LearningLesson } from '@/data/learningModules'
+
+const MODULE_ICONS: Record<string, any> = {
+  'Know Your Consumer Rights': ShoppingCart,
+  'Cyber Safety Awareness': Lock,
+  'Labour Rights Overview': Briefcase,
+  'Rights Against Harassment and Abuse': Users,
+  'Tenant Rights and Rental Laws': Home,
+}
+
+const MODULE_ACCENTS: Record<string, string> = {
+  'Know Your Consumer Rights': '#c9a96e',
+  'Cyber Safety Awareness': '#e07d3c',
+  'Labour Rights Overview': '#4fa3cf',
+  'Rights Against Harassment and Abuse': '#8b5cf6',
+  'Tenant Rights and Rental Laws': '#10b981',
+}
 
 // ── Quiz Component ─────────────────────────────────────────────────────────
 function QuizSection({ quiz }: { quiz: NonNullable<LearningLesson['quiz']> }) {
@@ -17,25 +33,24 @@ function QuizSection({ quiz }: { quiz: NonNullable<LearningLesson['quiz']> }) {
   if (!question) return null
 
   return (
-    <div className="mt-6 border-2 border-primary/20 rounded-xl p-5 bg-primary/5">
-      <div className="flex items-center gap-2 mb-3">
-        <Award className="w-4 h-4 text-primary" />
-        <span className="text-xs font-bold text-primary uppercase tracking-wider">Quick Check</span>
+    <div className="mt-8 border border-[#c9a96e]/20 rounded-2xl p-6 bg-[#c9a96e]/5 backdrop-blur-sm">
+      <div className="flex items-center gap-2 mb-4">
+        <Award className="w-4 h-4 text-[#c9a96e]" />
+        <span className="text-[10px] font-bold text-[#c9a96e] uppercase tracking-[2px]">Quick Check</span>
       </div>
-      <p className="font-semibold text-sm text-foreground mb-3">{question.question}</p>
-      <div className="space-y-2">
+      <p className="font-semibold text-base text-[#f0ece3] mb-4">{question.question}</p>
+      <div className="space-y-2.5">
         {question.options.map((opt, i) => (
           <button
             key={i}
             disabled={submitted}
             onClick={() => setSelected(i)}
             className={cn(
-              'w-full text-left text-sm px-3.5 py-2.5 rounded-lg border transition-all duration-200',
-              !submitted && selected === i ? 'border-primary/60 bg-primary/10' : '',
-              !submitted && selected !== i ? 'border-border bg-background hover:border-primary/30 hover:bg-primary/5' : '',
-              submitted && i === question.answer ? 'border-green-500 bg-green-50 text-green-800 font-semibold' : '',
-              submitted && selected === i && i !== question.answer ? 'border-red-400 bg-red-50 text-red-700' : '',
-              submitted && i !== question.answer && i !== selected ? 'border-border bg-background text-muted-foreground' : ''
+              'w-full text-left text-sm px-4 py-3 rounded-xl border transition-all duration-200',
+              !submitted && selected === i ? 'border-[#c9a96e]/60 bg-[#c9a96e]/10' : 'border-white/10 bg-white/5 hover:border-[#c9a96e]/30',
+              submitted && i === question.answer ? 'border-green-500/50 bg-green-500/10 text-green-400 font-semibold' : '',
+              submitted && selected === i && i !== question.answer ? 'border-red-500/50 bg-red-500/10 text-red-400' : '',
+              submitted && i !== question.answer && i !== selected ? 'opacity-40' : ''
             )}
           >
             <span className="font-medium mr-2">{String.fromCharCode(65 + i)}.</span> {opt}
@@ -46,12 +61,12 @@ function QuizSection({ quiz }: { quiz: NonNullable<LearningLesson['quiz']> }) {
         <button
           onClick={() => setSubmitted(true)}
           disabled={selected === null}
-          className="mt-3 px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg disabled:opacity-40 hover:bg-primary/90 transition-colors"
+          className="mt-4 px-6 py-2.5 bg-gradient-to-br from-[#c9a96e] to-[#e8c99a] text-[#0d1f3c] text-sm font-semibold rounded-full disabled:opacity-40 hover:scale-105 active:scale-95 transition-all shadow-md"
         >
           Submit Answer
         </button>
       ) : (
-        <div className={cn('mt-3 flex items-center gap-2 text-sm font-medium', selected === question.answer ? 'text-green-700' : 'text-red-600')}>
+        <div className={cn('mt-4 flex items-center gap-2 text-sm font-medium', selected === question.answer ? 'text-green-400' : 'text-red-400')}>
           {selected === question.answer ? <CheckCircle className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
           {selected === question.answer ? 'Correct! Well done.' : `Incorrect. The right answer is: ${question.options[question.answer]}`}
         </div>
@@ -65,56 +80,38 @@ function LessonView({ lesson, onBack }: { lesson: LearningLesson; onBack: () => 
   const paragraphs = lesson.content.split('\n').filter((p) => p.trim())
 
   return (
-    <div className="animate-slide-up">
-      <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-5 transition-colors">
-        <ArrowLeft className="w-4 h-4" />
+    <div className="animate-msg-in">
+      <button onClick={onBack} className="flex items-center gap-2 text-[13px] text-[#f0ece3]/40 hover:text-[#f0ece3] mb-6 transition-colors group">
+        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
         Back to module
       </button>
 
-      <h2 className="text-xl font-serif font-bold text-primary mb-4">{lesson.title}</h2>
+      <h2 className="text-2xl font-serif text-[#f0ece3] mb-6 leading-tight">{lesson.title}</h2>
 
-      <div className="prose prose-sm max-w-none space-y-3">
+      <div className="space-y-4">
         {paragraphs.map((para, i) => {
           if (para.startsWith('**') && para.endsWith('**') && para.replace(/\*\*/g, '').length > 0) {
-            return <h3 key={i} className="font-bold text-foreground text-base mt-5 mb-2 first:mt-0">{para.replace(/\*\*/g, '')}</h3>
+            return <h3 key={i} className="font-bold text-[#f0ece3] text-lg mt-8 mb-3 first:mt-0">{para.replace(/\*\*/g, '')}</h3>
           }
           if (para.startsWith('**') && para.includes('**')) {
-            // Inline bold
             const parts = para.split(/\*\*(.*?)\*\*/)
             return (
-              <p key={i} className="text-sm text-foreground/90 leading-relaxed">
-                {parts.map((part, j) => j % 2 === 1 ? <strong key={j} className="text-foreground font-semibold">{part}</strong> : part)}
+              <p key={i} className="text-[15px] text-[#f0ece3]/80 leading-[1.8]">
+                {parts.map((part, j) => j % 2 === 1 ? <strong key={j} className="text-[#f0ece3] font-semibold">{part}</strong> : part)}
               </p>
             )
           }
-          if (para.match(/^\d+\.\s/)) {
-            return (
-              <div key={i} className="flex items-start gap-2.5 ml-2">
-                <span className="font-bold text-primary shrink-0 text-sm">{para.match(/^(\d+)/)?.[1]}.</span>
-                <p className="text-sm text-foreground/90 leading-relaxed">{para.replace(/^\d+\.\s/, '')}</p>
-              </div>
-            )
-          }
-          if (para.startsWith('-') || para.startsWith('•')) {
-            return (
-              <div key={i} className="flex items-start gap-2 ml-2">
-                <span className="text-primary shrink-0 mt-1.5">•</span>
-                <p className="text-sm text-foreground/90 leading-relaxed">{para.replace(/^[-•]\s/, '')}</p>
-              </div>
-            )
-          }
-          return <p key={i} className="text-sm text-foreground/90 leading-relaxed">{para}</p>
+          return <p key={i} className="text-[15px] text-[#f0ece3]/80 leading-[1.8]">{para}</p>
         })}
       </div>
 
-      {/* Key Points */}
       {lesson.keyPoints.length > 0 && (
-        <div className="mt-6 border border-accent/30 rounded-xl p-4 bg-accent/5">
-          <p className="text-xs font-bold text-accent uppercase tracking-wider mb-3">Key Takeaways</p>
-          <ul className="space-y-2">
+        <div className="mt-8 border border-[#c9a96e]/20 rounded-2xl p-6 bg-white/5 backdrop-blur-sm">
+          <p className="text-[10px] font-bold text-[#c9a96e] uppercase tracking-[2px] mb-4">Key Takeaways</p>
+          <ul className="space-y-3">
             {lesson.keyPoints.map((point, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-foreground/90">
-                <CheckCircle className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
+              <li key={i} className="flex items-start gap-3 text-[14px] text-[#f0ece3]/90 leading-relaxed">
+                <CheckCircle className="w-4 h-4 text-[#c9a96e] shrink-0 mt-0.5" />
                 {point}
               </li>
             ))}
@@ -130,50 +127,54 @@ function LessonView({ lesson, onBack }: { lesson: LearningLesson; onBack: () => 
 // ── Module View ───────────────────────────────────────────────────────────
 function ModuleView({ module, onBack }: { module: LearningModule; onBack: () => void }) {
   const [activeLesson, setActiveLesson] = useState<LearningLesson | null>(null)
+  const Icon = MODULE_ICONS[module.title] || BookOpen
 
   if (activeLesson) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="max-w-2xl mx-auto px-6 py-12">
         <LessonView lesson={activeLesson} onBack={() => setActiveLesson(null)} />
       </div>
     )
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 animate-slide-up">
-      <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-5 transition-colors">
-        <ArrowLeft className="w-4 h-4" />
+    <div className="max-w-2xl mx-auto px-6 py-12 animate-msg-in">
+      <button onClick={onBack} className="flex items-center gap-2 text-[13px] text-[#f0ece3]/40 hover:text-[#f0ece3] mb-6 transition-colors group">
+        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
         All modules
       </button>
 
-      <div className={cn('border rounded-xl p-5 mb-6', module.color)}>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-2xl">{module.icon}</span>
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{module.category}</span>
+      <div className="glass rounded-[36px] p-8 mb-8 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 rounded-bl-[36px] opacity-[0.07] pointer-events-none" style={{ backgroundColor: MODULE_ACCENTS[module.title] }} />
+        <div className="flex items-center gap-3 mb-2">
+          <span className="text-[10px] font-semibold text-[#c9a96e] uppercase tracking-[2.5px]">{module.category}</span>
         </div>
-        <h2 className="text-xl font-serif font-bold text-foreground mb-1">{module.title}</h2>
-        <p className="text-sm text-muted-foreground mb-2">{module.description}</p>
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Clock className="w-3.5 h-3.5" />
-          ~{module.estimatedMinutes} minutes · {module.lessons.length} lessons
+        <div className="w-12 h-12 rounded-[14px] bg-[#c9a96e]/15 border border-[#c9a96e]/25 flex items-center justify-center text-[#c9a96e] mb-5">
+          <Icon className="w-6 h-6 stroke-[1.6]" />
+        </div>
+        <h2 className="text-2xl font-serif text-[#f0ece3] mb-2 leading-tight">{module.title}</h2>
+        <p className="text-[14px] font-light text-[#f0ece3]/60 mb-4 leading-relaxed">{module.description}</p>
+        <div className="flex items-center gap-4 text-[12px] text-[#f0ece3]/40">
+          <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {module.estimatedMinutes} min</span>
+          <span className="flex items-center gap-1.5"><BookOpen className="w-3.5 h-3.5" /> {module.lessons.length} lessons</span>
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         {module.lessons.map((lesson, i) => (
           <button
             key={lesson.id}
             onClick={() => setActiveLesson(lesson)}
-            className="w-full flex items-center gap-3 p-4 border border-border rounded-xl bg-card hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 group text-left"
+            className="w-full flex items-center gap-4 p-5 glass rounded-[24px] hover:scale-[1.01] active:scale-[0.99] group text-left"
           >
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-              <span className="text-sm font-bold text-primary">{i + 1}</span>
+            <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-[#c9a96e]/10 group-hover:border-[#c9a96e]/30 transition-all">
+              <span className="text-sm font-bold text-[#f0ece3]/40 group-hover:text-[#c9a96e]">{i + 1}</span>
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">{lesson.title}</p>
-              {lesson.quiz && <p className="text-xs text-muted-foreground mt-0.5">Includes quiz</p>}
+              <p className="font-semibold text-[15px] text-[#f0ece3] group-hover:text-[#c9a96e] transition-colors">{lesson.title}</p>
+              {lesson.quiz && <p className="text-[11px] text-[#f0ece3]/30 mt-0.5 uppercase tracking-wider font-semibold">Includes Quiz</p>}
             </div>
-            <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-all group-hover:translate-x-1" />
+            <ChevronRight className="w-4 h-4 text-[#f0ece3]/20 group-hover:text-[#c9a96e] group-hover:translate-x-1 transition-all" />
           </button>
         ))}
       </div>
@@ -190,62 +191,58 @@ export function LearnPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
-      {/* Header */}
-      <div className="text-center mb-10">
-        <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-semibold mb-3">
-          <BookOpen className="w-4 h-4" />
-          Legal Learning Centre
-        </div>
-        <h1 className="text-3xl font-serif font-bold text-primary mb-3">Build Your Legal Awareness</h1>
-        <p className="text-muted-foreground max-w-lg mx-auto text-sm leading-relaxed">
-          Structured learning modules covering key areas of Indian law — written in plain language for every citizen.
+    <div className="max-w-[1100px] mx-auto px-6 py-16">
+      <header className="text-center mb-16">
+        <span className="text-[10px] font-bold text-[#c9a96e] uppercase tracking-[3px] mb-4 block">Legal Education</span>
+        <h1 className="text-[clamp(32px,5vw,46px)] font-serif text-[#f0ece3] mb-5 tracking-[-1px] leading-tight">Master Your <em>Legal Rights</em></h1>
+        <p className="text-[15px] font-light text-[#f0ece3]/60 max-w-[520px] mx-auto leading-[1.7]">
+          Structured modules designed to empower you with essential legal knowledge through simple, expert-verified lessons.
         </p>
-      </div>
+      </header>
 
-      {/* Stats Bar */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16">
         {[
-          { label: 'Modules', value: learningModules.length },
-          { label: 'Total Lessons', value: learningModules.reduce((a, m) => a + m.lessons.length, 0) },
-          { label: 'Legal Topics', value: 5 },
+          { label: 'Total Modules', value: '05' },
+          { label: 'Active Lessons', value: '17' },
+          { label: 'Learners Today', value: '12k' },
         ].map(({ label, value }) => (
-          <div key={label} className="bg-card border border-border rounded-xl p-4 text-center shadow-sm">
-            <div className="text-2xl font-serif font-bold text-primary">{value}</div>
-            <div className="text-xs text-muted-foreground mt-0.5">{label}</div>
+          <div key={label} className="glass rounded-[28px] p-8 text-center hover:scale-[1.02] transition-transform">
+            <div className="text-[40px] font-serif text-[#c9a96e] mb-1">{value}</div>
+            <div className="text-[11px] font-semibold text-[#f0ece3]/40 uppercase tracking-[1.5px]">{label}</div>
           </div>
         ))}
       </div>
 
-      {/* Module Grid */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        {learningModules.map((module) => (
-          <button
-            key={module.id}
-            onClick={() => setActiveModule(module)}
-            className="text-left border border-border rounded-xl bg-card hover:border-primary/30 hover:shadow-md transition-all duration-200 overflow-hidden group"
-          >
-            <div className={cn('p-4 border-b border-border/60', module.color)}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-2xl">{module.icon}</span>
-                <span className="text-xs font-medium text-muted-foreground bg-background/60 px-2 py-0.5 rounded-full">{module.category}</span>
-              </div>
-              <h3 className="font-serif font-bold text-foreground group-hover:text-primary transition-colors">{module.title}</h3>
-            </div>
-            <div className="p-4">
-              <p className="text-xs text-muted-foreground leading-relaxed mb-3">{module.description}</p>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Clock className="w-3 h-3" />
-                  {module.estimatedMinutes} min · {module.lessons.length} lessons
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {learningModules.map((module) => {
+          const Icon = MODULE_ICONS[module.title] || BookOpen
+          return (
+            <button
+              key={module.id}
+              onClick={() => setActiveModule(module)}
+              className="group text-left glass rounded-[36px] flex flex-col relative overflow-hidden hover:-translate-y-1.5 hover:shadow-[0_12px_48px_rgba(0,0,0,0.3)] transition-all"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-bl-[36px] opacity-[0.07] pointer-events-none group-hover:opacity-[0.12] transition-opacity" style={{ backgroundColor: MODULE_ACCENTS[module.title] }} />
+              <div className="p-8 pb-6 flex-1">
+                <span className="text-[10px] font-bold text-[#c9a96e] uppercase tracking-[2px] mb-5 block">{module.category}</span>
+                <div className="w-12 h-12 rounded-[14px] bg-[#c9a96e]/15 border border-[#c9a96e]/25 flex items-center justify-center text-[#c9a96e] mb-6 group-hover:scale-110 transition-transform">
+                  <Icon className="w-6 h-6 stroke-[1.6]" />
                 </div>
-                <span className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:gap-1.5 transition-all">
-                  Start <ChevronRight className="w-3 h-3" />
-                </span>
+                <h3 className="text-[20px] font-serif text-[#f0ece3] mb-3 leading-tight group-hover:text-[#c9a96e] transition-colors">{module.title}</h3>
+                <p className="text-[13px] font-light text-[#f0ece3]/60 leading-relaxed line-clamp-2">{module.description}</p>
               </div>
-            </div>
-          </button>
-        ))}
+              <div className="px-8 py-5 border-t border-white/10 flex items-center justify-between bg-white/[0.02]">
+                <div className="flex gap-4 text-[12px] text-[#f0ece3]/30">
+                  <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {module.estimatedMinutes} min</span>
+                  <span className="flex items-center gap-1.5"><BookOpen className="w-3.5 h-3.5" /> {module.lessons.length}</span>
+                </div>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#c9a96e] to-[#e8c99a] flex items-center justify-center text-[#0d1f3c] shadow-sm group-hover:scale-110 transition-transform">
+                  <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+                </div>
+              </div>
+            </button>
+          )
+        })}
       </div>
     </div>
   )

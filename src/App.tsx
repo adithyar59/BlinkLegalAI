@@ -19,7 +19,12 @@ import { DashboardPage } from '@/pages/DashboardPage'
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-background flex flex-col relative overflow-x-hidden">
+        {/* Ambient Background Blobs */}
+        <div className="fixed top-[-100px] right-[-100px] w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(201,169,110,0.15),transparent)] blur-[100px] pointer-events-none z-[-1]" />
+        <div className="fixed bottom-[-100px] left-[-100px] w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(30,58,95,0.15),transparent)] blur-[100px] pointer-events-none z-[-1]" />
+        <div className="fixed top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] w-[300px] h-[300px] rounded-full bg-[radial-gradient(circle,rgba(201,169,110,0.05),transparent)] blur-[100px] pointer-events-none z-[-1]" />
+
         <Navbar />
         <main className="flex-1">
           <Routes>

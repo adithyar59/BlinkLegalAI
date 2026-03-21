@@ -5,7 +5,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react'
-import { Send, Scale, AlertCircle, ChevronDown, ChevronUp, FileText, Building2, ArrowRight, Sparkles } from 'lucide-react'
+import { Send, Scale, AlertCircle, ChevronDown, ChevronUp, FileText, Building2, ArrowRight, Sparkles, Star, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { askLegalQuestion, type LegalQueryResponse } from '@/lib/api'
 
@@ -27,19 +27,18 @@ const CATEGORY_COLORS: Record<string, string> = {
 }
 
 const SUGGESTED_QUESTIONS = [
-  'My employer has not paid my salary for two months. What can I do?',
-  'I received a defective product from an online store and they refuse to refund.',
-  'Someone hacked my UPI account and transferred money without my consent.',
-  'My landlord is threatening to throw me out without notice.',
-  'I am facing sexual harassment at my workplace. What are my rights?',
+  { text: "My employer has not paid my salary for two months. What can I do?", icon: Star },
+  { text: "I received a defective product from an online store and they refuse to refund.", icon: Sparkles },
+  { text: "My landlord is refusing to return my security deposit after I moved out.", icon: Scale },
+  { text: "I was harassed online. What legal action can I take under IT Act?", icon: AlertCircle },
 ]
 
 function TypingIndicator() {
   return (
     <div className="flex gap-1.5 items-center px-4 py-3">
-      <div className="w-2 h-2 rounded-full bg-primary/40 typing-dot" />
-      <div className="w-2 h-2 rounded-full bg-primary/40 typing-dot" />
-      <div className="w-2 h-2 rounded-full bg-primary/40 typing-dot" />
+      <div className="typing-dot" />
+      <div className="typing-dot" />
+      <div className="typing-dot" />
     </div>
   )
 }
@@ -47,54 +46,41 @@ function TypingIndicator() {
 function SourceCard({ source }: { source: LegalQueryResponse['sources'][0] }) {
   const [expanded, setExpanded] = useState(false)
   return (
-    <div className="border border-border rounded-lg overflow-hidden">
+    <div className="border border-white/10 rounded-xl overflow-hidden glass mt-2">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-3 py-2.5 bg-secondary/50 hover:bg-secondary/80 transition-colors text-left"
+        className="w-full flex items-center justify-between px-4 py-3 bg-white/5 hover:bg-white/10 transition-colors text-left"
       >
         <div className="flex items-center gap-2">
-          <FileText className="w-3.5 h-3.5 text-primary" />
-          <span className="text-xs font-semibold text-foreground">{source.title}</span>
+          <FileText className="w-3.5 h-3.5 text-[#c9a96e]" />
+          <span className="text-[13px] font-semibold text-[#f0ece3]">{source.title}</span>
         </div>
-        {expanded ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />}
+        {expanded ? <ChevronUp className="w-3.5 h-3.5 text-[#f0ece3]/40" /> : <ChevronDown className="w-3.5 h-3.5 text-[#f0ece3]/40" />}
       </button>
       {expanded && (
-        <div className="p-3 space-y-2 text-xs animate-fade-in">
+        <div className="p-4 space-y-3 text-[13px] animate-msg-in border-t border-white/10">
           <div>
-            <span className="font-medium text-muted-foreground">Law Reference: </span>
-            <span className="text-foreground">{source.law_reference}</span>
+            <span className="font-medium text-[#f0ece3]/60">Law Reference: </span>
+            <span className="text-[#f0ece3]">{source.law_reference}</span>
           </div>
-          <div className="flex items-start gap-1.5">
-            <Building2 className="w-3 h-3 text-accent mt-0.5 shrink-0" />
+          <div className="flex items-start gap-2">
+            <Building2 className="w-3.5 h-3.5 text-[#c9a96e] mt-0.5 shrink-0" />
             <div>
-              <span className="font-medium text-muted-foreground">Authority: </span>
-              <span className="text-foreground">{source.authority}</span>
+              <span className="font-medium text-[#f0ece3]/60">Authority: </span>
+              <span className="text-[#f0ece3]">{source.authority}</span>
             </div>
           </div>
           {source.documents_required.length > 0 && (
             <div>
-              <span className="font-medium text-muted-foreground block mb-1">Documents Required:</span>
-              <ul className="space-y-0.5">
+              <span className="font-medium text-[#f0ece3]/60 block mb-1.5">Documents Required:</span>
+              <ul className="space-y-1">
                 {source.documents_required.map((doc, i) => (
-                  <li key={i} className="flex items-start gap-1.5 text-foreground">
-                    <span className="text-primary mt-0.5">•</span>
+                  <li key={i} className="flex items-start gap-2 text-[#f0ece3]/90">
+                    <span className="text-[#c9a96e] mt-1 shrink-0">•</span>
                     {doc}
                   </li>
                 ))}
               </ul>
-            </div>
-          )}
-          {source.procedure_steps.length > 0 && (
-            <div>
-              <span className="font-medium text-muted-foreground block mb-1">Steps:</span>
-              <ol className="space-y-0.5">
-                {source.procedure_steps.map((step, i) => (
-                  <li key={i} className="flex items-start gap-1.5 text-foreground">
-                    <span className="text-primary font-bold shrink-0">{i + 1}.</span>
-                    {step}
-                  </li>
-                ))}
-              </ol>
             </div>
           )}
         </div>
@@ -108,38 +94,31 @@ function AssistantMessage({ message }: { message: Message }) {
   const paragraphs = message.content.split('\n').filter((p) => p.trim())
 
   return (
-    <div className="animate-slide-up space-y-3">
-      {/* Category Badge */}
-      {response && (
-        <span className={cn('inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border', CATEGORY_COLORS[response.category] || CATEGORY_COLORS['General Legal Query'])}>
-          <Scale className="w-3 h-3" />
-          {response.category}
-        </span>
-      )}
-
+    <div className="animate-msg-in space-y-4">
       {/* Answer */}
-      <div className="bg-card border border-border rounded-xl rounded-tl-sm p-4 shadow-sm max-w-2xl">
-        <div className="prose prose-sm max-w-none">
+      <div className="bg-white/5 border border-white/10 rounded-[20px] rounded-tl-[6px] p-5 backdrop-blur-xl shadow-sm max-w-2xl text-[#f0ece3]">
+        <div className="space-y-3">
           {paragraphs.map((para, i) => {
             if (para.startsWith('**') && para.endsWith('**')) {
-              return <p key={i} className="font-semibold text-foreground mt-3 mb-1 first:mt-0">{para.replace(/\*\*/g, '')}</p>
+              return <p key={i} className="font-semibold text-[#f0ece3] mt-4 mb-1 first:mt-0">{para.replace(/\*\*/g, '')}</p>
             }
-            if (para.startsWith('- ') || para.startsWith('• ')) {
-              return <p key={i} className="flex items-start gap-1.5 text-sm text-foreground/90 ml-2 mb-0.5"><span className="text-primary mt-1.5 shrink-0">•</span>{para.replace(/^[•-]\s/, '')}</p>
-            }
-            if (/^\d+\.\s/.test(para)) {
-              const num = para.match(/^(\d+)\./)?.[1]
-              return <p key={i} className="flex items-start gap-2 text-sm text-foreground/90 ml-2 mb-1"><span className="font-bold text-primary shrink-0 mt-0.5">{num}.</span>{para.replace(/^\d+\.\s/, '')}</p>
-            }
-            return <p key={i} className="text-sm text-foreground/90 leading-relaxed mb-2 last:mb-0">{para.replace(/\*\*/g, '')}</p>
+            return <p key={i} className="text-[14px] leading-[1.7] text-[#f0ece3]/90 mb-3 last:mb-0">{para.replace(/\*\*/g, '')}</p>
           })}
         </div>
+
+        {/* Citation Tag */}
+        {response && response.sources.length > 0 && (
+          <div className="inline-flex items-center gap-2 bg-[#c9a96e]/12 border border-[#c9a96e]/25 rounded-full px-3 py-1 mt-4">
+            <FileText className="w-3 h-3 text-[#c9a96e]" />
+            <span className="text-[11px] font-semibold text-[#c9a96e]">{response.sources[0].law_reference}</span>
+          </div>
+        )}
       </div>
 
-      {/* Sources */}
+      {/* Sources Grid */}
       {response && response.sources.length > 0 && (
-        <div className="max-w-2xl space-y-1.5">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Legal References Used</p>
+        <div className="max-w-2xl">
+          <p className="text-[10px] font-semibold text-[#f0ece3]/40 uppercase tracking-[2px] mb-2 px-1">Case References</p>
           {response.sources.map((source, i) => (
             <SourceCard key={i} source={source} />
           ))}
@@ -148,13 +127,11 @@ function AssistantMessage({ message }: { message: Message }) {
 
       {/* Disclaimer */}
       {response && (
-        <div className="max-w-2xl flex gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5 text-xs text-amber-800">
-          <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-600" />
+        <div className="max-w-2xl flex gap-3 bg-[#c9a96e]/8 border border-[#c9a96e]/20 rounded-[16px] px-4 py-3 text-[11.5px] text-[#e8c99a]/80 leading-relaxed">
+          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-[#c9a96e]" />
           {response.disclaimer}
         </div>
       )}
-
-      <span className="text-xs text-muted-foreground">{message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
     </div>
   )
 }
@@ -196,7 +173,7 @@ export function ChatInterface() {
       }
       setMessages((prev) => [...prev, assistantMsg])
     } catch (err) {
-      setError('Failed to get a response. Please check your connection and try again.')
+      setError('Failed to get a response. Please check your connection.')
     } finally {
       setIsLoading(false)
     }
@@ -210,58 +187,59 @@ export function ChatInterface() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)]">
-      {/* Welcome / Messages Area */}
-      <div className="flex-1 overflow-y-auto">
+    <div className="flex flex-col h-[calc(100vh-65px)]">
+      <div className="flex-1 overflow-y-auto scroll-smooth">
         {messages.length === 0 ? (
-          /* Welcome Screen */
-          <div className="flex flex-col items-center justify-center min-h-full px-4 py-12 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-              <Scale className="w-8 h-8 text-primary" />
+          <div className="flex flex-col items-center pt-16 px-4 text-center">
+            <div className="inline-flex items-center gap-2 bg-[#c9a96e]/12 border border-[#c9a96e]/25 rounded-full px-3 py-1.5 mb-6">
+              <Star className="w-3 h-3 text-[#c9a96e] fill-current" />
+              <span className="text-[11px] font-bold text-[#c9a96e] uppercase tracking-[0.5px]">Powered by Indian Law</span>
             </div>
-            <h1 className="text-2xl font-serif font-bold text-primary mb-2">LegalEase AI Assistant</h1>
-            <p className="text-muted-foreground text-sm max-w-md mb-2">
-              Ask any legal question in plain English. I'll explain your rights using verified Indian law.
+            
+            <h1 className="text-[clamp(36px,6vw,52px)] font-serif text-[#f0ece3] max-w-[600px] leading-[1.1] tracking-[-1.5px] mb-5">
+              Your <em className="italic text-[#c9a96e] not-italic">Legal Guide,</em> in Plain Language
+            </h1>
+            
+            <p className="text-[15px] font-light text-[#f0ece3]/60 max-w-[440px] leading-[1.7] mb-6">
+              Simplifying complex laws into clear, actionable awareness for every citizen.
             </p>
-            <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-700 text-xs px-3 py-1.5 rounded-full mb-8">
-              <AlertCircle className="w-3 h-3" />
-              This is legal information only — not legal advice
+
+            <div className="inline-flex items-center gap-2 bg-[#c9a96e]/8 border border-[#c9a96e]/2 rounded-full px-4 py-2 text-[11.5px] text-[#e8c99a]/80 mb-12">
+              <AlertCircle className="w-4 h-4" />
+              Legal awareness only — not legal advice
             </div>
 
-            {/* Suggested Questions */}
-            <div className="w-full max-w-lg space-y-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Try asking:</p>
+            <div className="w-full max-w-[680px] space-y-3">
+              <p className="text-[10px] font-semibold text-[#f0ece3]/35 uppercase tracking-[2px] mb-4">Try Asking</p>
               {SUGGESTED_QUESTIONS.map((q, i) => (
                 <button
                   key={i}
-                  onClick={() => handleSubmit(q)}
-                  className="w-full text-left flex items-start gap-2.5 p-3 rounded-xl border border-border bg-card hover:border-primary/30 hover:bg-primary/5 transition-all duration-200 group"
+                  onClick={() => handleSubmit(q.text)}
+                  className="w-full text-left flex items-center gap-4 p-4 rounded-[28px] glass group"
                 >
-                  <Sparkles className="w-4 h-4 text-primary/50 group-hover:text-primary mt-0.5 shrink-0 transition-colors" />
-                  <span className="text-sm text-foreground/80 group-hover:text-foreground">{q}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-primary ml-auto shrink-0 mt-0.5 transition-colors" />
+                  <div className="w-9 h-9 rounded-[10px] bg-[#c9a96e]/15 flex items-center justify-center text-[#c9a96e] shrink-0">
+                    <q.icon className="w-[18px] h-[18px] stroke-[1.6]" />
+                  </div>
+                  <span className="text-[13.5px] text-[#f0ece3]/60 group-hover:text-[#f0ece3] transition-colors flex-1">{q.text}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#f0ece3]/35 group-hover:text-[#c9a96e] transition-colors" />
                 </button>
               ))}
             </div>
           </div>
         ) : (
-          /* Conversation */
-          <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+          <div className="max-w-[760px] mx-auto px-6 py-10 space-y-8">
             {messages.map((msg) => (
               <div key={msg.id} className={cn('flex', msg.role === 'user' ? 'justify-end' : 'justify-start')}>
                 {msg.role === 'user' ? (
-                  <div className="animate-slide-up max-w-sm">
-                    <div className="bg-primary text-primary-foreground px-4 py-3 rounded-xl rounded-tr-sm text-sm leading-relaxed shadow-sm">
+                  <div className="flex flex-col items-end gap-2 max-w-[85%] animate-msg-in">
+                    <div className="bg-gradient-to-br from-[#c9a96e]/25 to-[#c9a96e]/12 border border-[#c9a96e]/25 px-5 py-4 rounded-[20px] rounded-br-[6px] text-[14px] text-[#f0ece3] leading-[1.7] backdrop-blur-xl">
                       {msg.content}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1 text-right">
-                      {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </p>
                   </div>
                 ) : (
-                  <div className="flex items-start gap-2.5 max-w-full">
-                    <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center shrink-0 mt-1 shadow-sm">
-                      <Scale className="w-4 h-4 text-primary-foreground" />
+                  <div className="flex items-start gap-4 max-w-full">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#c9a96e] to-[#e8c99a] flex items-center justify-center shrink-0 shadow-md">
+                      <Scale className="w-4 h-4 text-[#0d1f3c] stroke-[2.5]" />
                     </div>
                     <AssistantMessage message={msg} />
                   </div>
@@ -270,64 +248,54 @@ export function ChatInterface() {
             ))}
 
             {isLoading && (
-              <div className="flex items-start gap-2.5">
-                <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center shrink-0 shadow-sm">
-                  <Scale className="w-4 h-4 text-primary-foreground" />
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#c9a96e] to-[#e8c99a] flex items-center justify-center shrink-0 shadow-md">
+                  <Scale className="w-4 h-4 text-[#0d1f3c] stroke-[2.5]" />
                 </div>
-                <div className="bg-card border border-border rounded-xl rounded-tl-sm shadow-sm">
+                <div className="glass px-4 py-2 rounded-[20px] rounded-bl-[6px]">
                   <TypingIndicator />
                 </div>
               </div>
             )}
 
             {error && (
-              <div className="flex items-center gap-2 bg-destructive/10 border border-destructive/30 text-destructive text-sm px-4 py-3 rounded-lg animate-fade-in">
-                <AlertCircle className="w-4 h-4 shrink-0" />
+              <div className="glass px-5 py-4 rounded-2xl text-red-400 text-[13px] border-red-400/20">
                 {error}
               </div>
             )}
-
             <div ref={messagesEndRef} />
           </div>
         )}
       </div>
 
-      {/* Input Area */}
-      <div className="border-t border-border bg-card/95 backdrop-blur-sm p-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="flex items-end gap-2 bg-background border border-border rounded-xl p-2 shadow-sm focus-within:border-primary/50 focus-within:shadow-md transition-all duration-200">
+      <div className="relative bg-gradient-to-t from-[#0d1f3c] via-[#0d1f3c] to-transparent pt-10 pb-8 px-6">
+        <div className="max-w-[760px] mx-auto">
+          <div className="flex items-end gap-3 glass p-2 rounded-[28px] focus-within:border-[#c9a96e] focus-within:shadow-[0_0_0_3px_rgba(201,169,110,0.08)] transition-all">
             <textarea
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Describe your legal situation or ask a question… (Enter to send)"
+              placeholder="Describe your legal situation..."
               rows={1}
-              className="flex-1 resize-none bg-transparent px-2 py-1.5 text-sm outline-none focus:outline-none focus:ring-0 placeholder:text-muted-foreground max-h-32 min-h-[36px]"
-              style={{ height: 'auto' }}
-              onInput={(e) => {
-                const t = e.target as HTMLTextAreaElement
-                t.style.height = 'auto'
-                t.style.height = Math.min(t.scrollHeight, 128) + 'px'
-              }}
+              className="flex-1 bg-transparent border-none outline-none text-[#f0ece3] text-[14px] px-4 py-2.5 resize-none max-h-32 placeholder:text-[#f0ece3]/35"
               disabled={isLoading}
             />
             <button
               onClick={() => handleSubmit(input)}
               disabled={!input.trim() || isLoading}
               className={cn(
-                'flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 shrink-0',
+                'w-10 h-10 rounded-[12px] flex items-center justify-center transition-all',
                 input.trim() && !isLoading
-                  ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:scale-105 active:scale-95'
-                  : 'bg-muted text-muted-foreground cursor-not-allowed'
+                  ? 'bg-gradient-to-br from-[#c9a96e] to-[#e8c99a] text-[#0d1f3c] shadow-md hover:scale-105 active:scale-95'
+                  : 'bg-white/5 text-[#f0ece3]/20 cursor-not-allowed'
               )}
-              aria-label="Send message"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-4 h-4 stroke-[2.5]" />
             </button>
           </div>
-          <p className="text-center text-xs text-muted-foreground mt-2">
-            LegalEase AI provides legal awareness only. Always consult a qualified lawyer for your specific situation.
+          <p className="text-center text-[11px] text-[#f0ece3]/35 mt-4">
+            LegalEase provides legal awareness only. Always consult a qualified lawyer for your situation.
           </p>
         </div>
       </div>
